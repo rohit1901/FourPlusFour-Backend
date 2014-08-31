@@ -21,7 +21,7 @@ public class Access
 			throws SQLException {
 		ArrayList<Credentials> credentialList = new ArrayList<Credentials>();
 		PreparedStatement stmt = con
-				.prepareStatement("SELECT username,password FROM credentials");
+				.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.credentials");
 		ResultSet rs = stmt.executeQuery();
 		try 
 		{
