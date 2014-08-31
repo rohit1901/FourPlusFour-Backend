@@ -3,8 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.TT.services</groupId>
-    <artifactId>TT-Services</artifactId>
+    <groupId>com.FourPlusFour.services</groupId>
+    <artifactId>FourPlusFour-Services</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>TT-Services</name>
@@ -104,7 +104,7 @@
     </dependencies>
 
     <build>
-        <finalName>TT-Services</finalName>
+        <finalName>FourPlusFour-Services</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -64,6 +64,52 @@ public class credentialService
 		}
 		return credentials;
 	}
+	
+	/**
+	 * Matches credentials with those in the database.
+	 * Returns true if it's a successful match otherwise returns
+	 * false.
+	 * 
+	 * @param username
+	 * @param password
+	 * @param type
+	 * @return
+	 */
+	@GET
+	@Path("/matchCredentials")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String matchCredentials(@QueryParam("username") String username,
+	        @QueryParam("password") String password,
+	        @QueryParam("type") String type) 
+	{
+		//String credentials = null;
+		
+		final String TRUE = "true";
+		final String FALSE = "false";
+		
+		//System.out.println(credentials);
+		
+		ArrayList<Credentials> credentialList = new ArrayList<Credentials>();
+		try 
+		{
+			credentialList = new AccessManager().getCredential();
+			//Gson gson = new Gson();
+			
+			for(Credentials credential : credentialList)
+			{
+				if((credential.getUsername().equals(username)) && (credential.getPassword().equals(password)) && (credential.getType().equals(type)))
+				{
+					return TRUE;
+				}
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return FALSE;
+	}
 		
 	/**
 	 * @param key
