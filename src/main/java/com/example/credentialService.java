@@ -110,6 +110,39 @@ public class credentialService
 		}
 		return FALSE;
 	}
+	
+	/**
+	 * Matches credentials with those in the database.
+	 * Returns true if it's a successful match otherwise returns
+	 * false.
+	 * 
+	 * @param username
+	 * @param password
+	 * @param type
+	 * @return
+	 */
+	@GET
+	@Path("/getSponsorAmount")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSponsorAmount(@QueryParam("username") String username) 
+	{
+		//String credentials = null;
+		
+		int amount = 0;
+				
+		//System.out.println(credentials);
+		try 
+		{
+			amount = new AccessManager().getSponsorAmount(username);
+			return ("" + amount + "");
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return ("" + amount + "");
+	}
 		
 	/**
 	 * @param key

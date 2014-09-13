@@ -18,4 +18,13 @@ public class AccessManager
 		credentials = access.getCredential(con);
 		return credentials;
 	}
+	
+	public int getSponsorAmount(String username) throws Exception
+	{
+		Database db = new Database();
+		Connection con = db.getConnection();
+		Access access = new Access();
+		int amount = access.getSponsorAmount(username, con);
+		return amount;
+	}
 }

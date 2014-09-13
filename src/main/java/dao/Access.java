@@ -45,4 +45,26 @@ public class Access
 		return credentialList;
 
 	}
+	
+	public int getSponsorAmount(String username, Connection con)
+	{
+		int amount = 0;
+		PreparedStatement stmt;
+		try 
+		{
+			stmt = con.prepareStatement("SELECT amount FROM heroku_4265740aecd0c5d.sponsor where email='" + username + "'");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next())
+			{
+				amount = rs.getInt("amount");
+			}
+		} 
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return amount;
+	}
 }
