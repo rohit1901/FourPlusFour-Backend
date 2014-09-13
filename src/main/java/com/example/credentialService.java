@@ -111,14 +111,11 @@ public class credentialService
 		return FALSE;
 	}
 	
+	
 	/**
-	 * Matches credentials with those in the database.
-	 * Returns true if it's a successful match otherwise returns
-	 * false.
+	 * Gets the amount sponsored by a sponsor.
 	 * 
 	 * @param username
-	 * @param password
-	 * @param type
 	 * @return
 	 */
 	@GET
@@ -127,11 +124,8 @@ public class credentialService
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getSponsorAmount(@QueryParam("username") String username) 
 	{
-		//String credentials = null;
-		
 		int amount = 0;
-				
-		//System.out.println(credentials);
+		
 		try 
 		{
 			amount = new AccessManager().getSponsorAmount(username);
@@ -143,6 +137,75 @@ public class credentialService
 		}
 		return ("" + amount + "");
 	}
+
+
+	/**
+	 * Submits values to the student registration table. 
+	 * 
+	 * @param name
+	 * @param age
+	 * @param school
+	 * @param address
+	 * @param email
+	 * @param bio
+	 * @throws SQLException
+	 */
+	@POST
+	@Path("/registerStudent")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public void registerStudent(@FormParam("q1") String name,
+			@FormParam("q2") int age,
+			@FormParam("q3") String school,
+			@FormParam("q4") String address,
+			@FormParam("q5") String email,
+			@FormParam("q6") String bio)
+			throws SQLException 
+			{
+				PreparedStatement ps = null;
+				Connection con = null;
+				Database db = new Database();
+				/*String hashValue;
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Calendar registrationDateTime = Calendar.getInstance();
+												
+				Boolean sendRegistrationLinkStatus = false;
+				
+				hashValue = new String(Base64.encode(email.getBytes()));	
+				*/
+				
+				try 
+				{
+		
+					con = db.getConnection();
+					ps = con.prepareStatement(
+							"insert into child (name,age,school,address,email,bio) values (?,?,?,?,?,?)");
+		
+					ps.setString(1, name);
+					ps.setInt(2, age);
+					ps.setString(3, school);
+					ps.setString(4, address);
+					ps.setString(5, email);
+					ps.setString(6, bio);
+					
+					int result = ps.executeUpdate();
+					
+					if(result > 0)
+					{
+						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
+						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
+					}
+
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				} 
+				finally 
+				{
+					con.close();
+				}
+			}
 		
 	/**
 	 * @param key
