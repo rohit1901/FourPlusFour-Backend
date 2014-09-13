@@ -289,7 +289,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into sponsor (name,company,email,products,plan,bio) values (?,?,?,?,?,?)");
+							"insert into advertiser (name,company,email,products,plan,bio) values (?,?,?,?,?,?)");
 		
 					ps.setString(1, name);
 					ps.setString(2, company);
