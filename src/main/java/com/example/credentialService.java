@@ -209,7 +209,56 @@ public class credentialService
 					con.close();
 				}
 			}
+	
+	/**
+	 * Submits values to the sponsor registration table.
+	 * 
+	 * @param name
+	 * @param email
+	 * @param bio
+	 * @throws SQLException
+	 */
+	@POST
+	@Path("/registerSponsor")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public void registerSponsor(@FormParam("q1") String name,
+			@FormParam("q2") String email,
+			@FormParam("q3") String bio)
+			throws SQLException 
+			{
+				PreparedStatement ps = null;
+				Connection con = null;
+				Database db = new Database();
+				try 
+				{
 		
+					con = db.getConnection();
+					ps = con.prepareStatement(
+							"insert into sponsor (name,email,bio,amount) values (?,?,?," + ZERO + ")");
+		
+					ps.setString(1, name);
+					ps.setString(2, email);
+					ps.setString(3, bio);
+					
+					int result = ps.executeUpdate();
+					
+					if(result > 0)
+					{
+						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
+						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
+					}
+
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				} 
+				finally 
+				{
+					con.close();
+				}
+			}
 	/**
 	 * @param key
 	 * @throws SQLException
