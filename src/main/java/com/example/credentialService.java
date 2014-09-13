@@ -181,7 +181,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into child (name,age,school,address,email,bio,type,level) values (?,?,?,?,?,?,'" + CHILD + "'," + ZERO + ")");
+							"insert into child (name,age,school,address,email,bio,type) values (?,?,?,?,?,?,'" + CHILD + "'," + ZERO + ")");
 		
 					ps.setString(1, name);
 					ps.setInt(2, age);
