@@ -44,6 +44,7 @@ import dto.Credentials;
 public class credentialService 
 {
 
+	public static String CHILD = "child"; 
 	private boolean updateFlag = false;
 
 	@GET
@@ -178,7 +179,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into child (name,age,school,address,email,bio) values (?,?,?,?,?,?)");
+							"insert into child (name,age,school,address,email,bio,type) values (?,?,?,?,?,?," + CHILD + ")");
 		
 					ps.setString(1, name);
 					ps.setInt(2, age);
