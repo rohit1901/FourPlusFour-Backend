@@ -259,6 +259,64 @@ public class credentialService
 					con.close();
 				}
 			}
+	
+	/**
+	 * Submits values to the advertiser registration table.
+	 * 
+	 * @param name
+	 * @param company
+	 * @param email
+	 * @param products
+	 * @param plan
+	 * @param bio
+	 * @throws SQLException
+	 */
+	@POST
+	@Path("/registerAdvertiser")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public void registerAdvertiser(@FormParam("q1") String name,
+			@FormParam("q2") String company,
+			@FormParam("q3") String email,@FormParam("q4") String products,
+			@FormParam("q5") String plan,
+			@FormParam("q6") String bio)
+			throws SQLException 
+			{
+				PreparedStatement ps = null;
+				Connection con = null;
+				Database db = new Database();
+				try 
+				{
+		
+					con = db.getConnection();
+					ps = con.prepareStatement(
+							"insert into sponsor (name,company,email,products,plan,bio) values (?,?,?,?,?,?)");
+		
+					ps.setString(1, name);
+					ps.setString(2, company);
+					ps.setString(3, email);
+					ps.setString(4, products);
+					ps.setString(5, plan);
+					ps.setString(6, bio);
+					
+					int result = ps.executeUpdate();
+					
+					if(result > 0)
+					{
+						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
+						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
+					}
+
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				} 
+				finally 
+				{
+					con.close();
+				}
+			}
 	/**
 	 * @param key
 	 * @throws SQLException
