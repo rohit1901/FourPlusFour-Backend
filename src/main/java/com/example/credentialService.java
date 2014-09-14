@@ -206,7 +206,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into child (email,date,plan,product,usedAt) values (?,?,?,?,?)");
+							"insert into advertisement (email,date,plan,product,usedAt) values (?,?,?,?,?)");
 		
 					ps.setString(1, email);
 					ps.setString(2, date);
