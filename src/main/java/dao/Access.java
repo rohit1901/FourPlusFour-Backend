@@ -85,16 +85,6 @@ public class Access
 						advertisementsList.add(advertisementObj);
 					}
 				}
-			
-				else
-				{
-					advertisementObj.setEmail("empty");
-					advertisementObj.setDate("empty");
-					advertisementObj.setPlan(rs.getString("empty"));
-					advertisementObj.setProduct(rs.getString("empty"));
-					advertisementObj.setUsedAt(rs.getString("empty"));
-					advertisementsList.add(advertisementObj);
-				}
 			}
 		} 
 		catch (SQLException e) 
