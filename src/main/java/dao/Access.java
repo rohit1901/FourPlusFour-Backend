@@ -61,7 +61,7 @@ public class Access
 		ArrayList<Advertisements> advertisementsList = new ArrayList<Advertisements>();
 		Advertisements advertisementObj = new Advertisements();
 		
-		System.out.println("before executing count query.");
+		System.out.println("before executing count query. value of email is----" + email);
 		PreparedStatement stmt = con.prepareStatement("SELECT count(*) FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
 		/*PreparedStatement stmt = con
 				.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");*/
