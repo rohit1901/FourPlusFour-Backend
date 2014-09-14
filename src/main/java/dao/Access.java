@@ -69,15 +69,15 @@ public class Access
 		{
 			if(rs.getInt("count(*)") != 0)
 			{
-				stmt = con.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
-				rs = stmt.executeQuery();
-				while (rs.next()) 
+				PreparedStatement stmtNew = con.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
+				ResultSet rsNew = stmtNew.executeQuery();
+				while (rsNew.next()) 
 				{
-					advertisementObj.setEmail(rs.getString("email"));
-					advertisementObj.setDate(rs.getString("date"));
-					advertisementObj.setPlan(rs.getString("plan"));
-					advertisementObj.setProduct(rs.getString("product"));
-					advertisementObj.setUsedAt(rs.getString("usedAt"));
+					advertisementObj.setEmail(rsNew.getString("email"));
+					advertisementObj.setDate(rsNew.getString("date"));
+					advertisementObj.setPlan(rsNew.getString("plan"));
+					advertisementObj.setProduct(rsNew.getString("product"));
+					advertisementObj.setUsedAt(rsNew.getString("usedAt"));
 					advertisementsList.add(advertisementObj);
 				}
 			}

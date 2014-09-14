@@ -198,6 +198,9 @@ public class credentialService
 		{
 			e.printStackTrace();
 		}
+		
+		System.out.println("advertisementList" + advertisementList);
+		System.out.println("advertisements" + advertisements);
 		return advertisements;
 	}
 
