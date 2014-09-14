@@ -59,6 +59,8 @@ public class Access
 	public ArrayList<Advertisements> getAdvertisements(String email, Connection con)
 			throws SQLException {
 		ArrayList<Advertisements> advertisementsList = new ArrayList<Advertisements>();
+		Advertisements advertisementObj = new Advertisements();
+		
 		PreparedStatement stmt = con.prepareStatement("SELECT count(*) FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
 		/*PreparedStatement stmt = con
 				.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");*/
@@ -71,7 +73,6 @@ public class Access
 				rs = stmt.executeQuery();
 				while (rs.next()) 
 				{
-					Advertisements advertisementObj = new Advertisements();
 					advertisementObj.setEmail(rs.getString("email"));
 					advertisementObj.setDate(rs.getString("date"));
 					advertisementObj.setPlan(rs.getString("plan"));
@@ -79,6 +80,15 @@ public class Access
 					advertisementObj.setUsedAt(rs.getString("usedAt"));
 					advertisementsList.add(advertisementObj);
 				}
+			}
+			else
+			{
+				advertisementObj.setEmail("empty");
+				advertisementObj.setDate("empty");
+				advertisementObj.setPlan(rs.getString("empty"));
+				advertisementObj.setProduct(rs.getString("empty"));
+				advertisementObj.setUsedAt(rs.getString("empty"));
+				advertisementsList.add(advertisementObj);
 			}
 		} 
 		catch (SQLException e) 
