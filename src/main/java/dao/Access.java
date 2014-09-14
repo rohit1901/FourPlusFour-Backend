@@ -68,29 +68,33 @@ public class Access
 		ResultSet rs = stmt.executeQuery();
 		try 
 		{
-			if(rs.getInt("count(*)") != 0)
+			while(rs.next())
 			{
-				System.out.println("count is not zero.");
-				PreparedStatement stmtNew = con.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
-				ResultSet rsNew = stmtNew.executeQuery();
-				while (rsNew.next()) 
+				if(rs.getInt("count(*)") != 0)
 				{
-					advertisementObj.setEmail(rsNew.getString("email"));
-					advertisementObj.setDate(rsNew.getString("date"));
-					advertisementObj.setPlan(rsNew.getString("plan"));
-					advertisementObj.setProduct(rsNew.getString("product"));
-					advertisementObj.setUsedAt(rsNew.getString("usedAt"));
+					System.out.println("count is not zero.");
+					PreparedStatement stmtNew = con.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
+					ResultSet rsNew = stmtNew.executeQuery();
+					while (rsNew.next()) 
+					{
+						advertisementObj.setEmail(rsNew.getString("email"));
+						advertisementObj.setDate(rsNew.getString("date"));
+						advertisementObj.setPlan(rsNew.getString("plan"));
+						advertisementObj.setProduct(rsNew.getString("product"));
+						advertisementObj.setUsedAt(rsNew.getString("usedAt"));
+						advertisementsList.add(advertisementObj);
+					}
+				}
+			
+				else
+				{
+					advertisementObj.setEmail("empty");
+					advertisementObj.setDate("empty");
+					advertisementObj.setPlan(rs.getString("empty"));
+					advertisementObj.setProduct(rs.getString("empty"));
+					advertisementObj.setUsedAt(rs.getString("empty"));
 					advertisementsList.add(advertisementObj);
 				}
-			}
-			else
-			{
-				advertisementObj.setEmail("empty");
-				advertisementObj.setDate("empty");
-				advertisementObj.setPlan(rs.getString("empty"));
-				advertisementObj.setProduct(rs.getString("empty"));
-				advertisementObj.setUsedAt(rs.getString("empty"));
-				advertisementsList.add(advertisementObj);
 			}
 		} 
 		catch (SQLException e) 
