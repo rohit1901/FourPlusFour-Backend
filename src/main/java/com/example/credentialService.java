@@ -44,7 +44,15 @@ import dto.Credentials;
 public class credentialService 
 {
 
-	public static String CHILD = "child"; 
+	public static final String CHILD = "child";
+	public static final String ADVERTISER = "advertiser";
+	public static final String SPONSOR = "sponsor";
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
+	public static final String SPACE = " ";
+	
+	public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	public static int ZERO = 0; 
 	
 	private boolean updateFlag = false;
@@ -86,18 +94,10 @@ public class credentialService
 	        @QueryParam("password") String password,
 	        @QueryParam("type") String type) 
 	{
-		//String credentials = null;
-		
-		final String TRUE = "true";
-		final String FALSE = "false";
-		
-		//System.out.println(credentials);
-		
 		ArrayList<Credentials> credentialList = new ArrayList<Credentials>();
 		try 
 		{
 			credentialList = new AccessManager().getCredential();
-			//Gson gson = new Gson();
 			
 			for(Credentials credential : credentialList)
 			{
@@ -140,10 +140,102 @@ public class credentialService
 		}
 		return ("" + amount + "");
 	}
+	
+	/**
+	 * Gets the count of names from child/advertiser/sponsor
+	 * db for a particular email (username) and returns true if count
+	 * is equal to 0 otherwise returns false.
+	 * 
+	 * @param email
+	 * @param type
+	 * @return
+	 */
+	@GET
+	@Path("/checkDuplicateUser")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String checkDuplicateUser(@QueryParam("email") String email, @QueryParam("type") String type) 
+	{
+		int countName = 0;
+		try 
+		{
+			countName = new AccessManager().countName(email, type);
+			
+			if(countName == 0)
+			{
+				return TRUE;
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return FALSE;
+	}
 
 
 	/**
-	 * Submits values to the student registration table. 
+	 * creates an advertisement for today's date.
+	 * 
+	 * @param email
+	 * @param plan
+	 * @param product
+	 * @param usedAt
+	 * @throws SQLException
+	 */
+	@POST
+	@Path("/createAdvertisement")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public void createAdvertisement(@FormParam("q1") String email,
+			@FormParam("q2") String plan,
+			@FormParam("q3") String product,
+			@FormParam("q4") String usedAt)
+			throws SQLException 
+			{
+				Calendar advertisementDateTime = Calendar.getInstance();
+				String advertisementDateTimeString = dateFormat.format(advertisementDateTime.getTime());
+				String[] advertisementDateTimeStringArray = advertisementDateTimeString.split(SPACE);
+				String date = advertisementDateTimeStringArray[0];
+				
+				PreparedStatement ps = null;
+				Connection con = null;
+				Database db = new Database();
+				
+				try 
+				{
+		
+					con = db.getConnection();
+					ps = con.prepareStatement(
+							"insert into child (email,date,plan,product,usedAt) values (?,?,?,?,?)");
+		
+					ps.setString(1, email);
+					ps.setString(2, date);
+					ps.setString(3, plan);
+					ps.setString(4, product);
+					ps.setString(5, usedAt);
+					
+					int result = ps.executeUpdate();
+					
+					if(result > 0)
+					{
+						System.out.println("SQL Query Executed successfully. Records inserted in advertisement----"  + result);
+					}
+
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				} 
+				finally 
+				{
+					con.close();
+				}
+			}
+	/**
+	 * Submits values to the student registration table
+	 * and simultaneously creates a new entry in credentials
+	 * table for the user.
 	 * 
 	 * @param name
 	 * @param age
@@ -151,6 +243,7 @@ public class credentialService
 	 * @param address
 	 * @param email
 	 * @param bio
+	 * @param password
 	 * @throws SQLException
 	 */
 	@POST
@@ -161,7 +254,8 @@ public class credentialService
 			@FormParam("q3") String school,
 			@FormParam("q4") String address,
 			@FormParam("q5") String email,
-			@FormParam("q6") String bio)
+			@FormParam("q6") String bio,
+			@FormParam("q7") String password)
 			throws SQLException 
 			{
 				PreparedStatement ps = null;
@@ -181,7 +275,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into child (name,age,school,address,email,bio,type,testLevel) values (?,?,?,?,?,?,'" + CHILD + "'," + ZERO + ")");
+							"insert into child (name,age,school,address,email,bio,type,testLevel,password) values (?,?,?,?,?,?,'" + CHILD + "'," + ZERO + ",?)");
 		
 					ps.setString(1, name);
 					ps.setInt(2, age);
@@ -189,6 +283,7 @@ public class credentialService
 					ps.setString(4, address);
 					ps.setString(5, email);
 					ps.setString(6, bio);
+					ps.setString(9, password);
 					
 					int result = ps.executeUpdate();
 					
@@ -196,6 +291,16 @@ public class credentialService
 					{
 						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
 						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
+						ps = con.prepareStatement(
+								"insert into credentials (username,password,type) values (?,?," + CHILD + ")");
+						ps.setString(1, email);
+						ps.setString(2, password);
+						
+						result = ps.executeUpdate();
+						if(result > 0)
+						{
+							System.out.println("SQL Query Executed successfully. Records inserted in credentials----"  + result);
+						}
 					}
 
 				} 
@@ -211,11 +316,14 @@ public class credentialService
 			}
 	
 	/**
-	 * Submits values to the sponsor registration table.
+	 * Submits values to the sponsor registration table
+	 * and simultaneously creates a new entry in credentials
+	 * table for the user.
 	 * 
 	 * @param name
 	 * @param email
 	 * @param bio
+	 * @param password
 	 * @throws SQLException
 	 */
 	@POST
@@ -223,7 +331,8 @@ public class credentialService
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public void registerSponsor(@FormParam("q1") String name,
 			@FormParam("q2") String email,
-			@FormParam("q3") String bio)
+			@FormParam("q3") String bio,
+			@FormParam("q4") String password)
 			throws SQLException 
 			{
 				PreparedStatement ps = null;
@@ -234,18 +343,28 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into sponsor (name,email,bio,amount) values (?,?,?," + ZERO + ")");
+							"insert into sponsor (name,email,bio,amount,password) values (?,?,?," + ZERO + ",?)");
 		
 					ps.setString(1, name);
 					ps.setString(2, email);
 					ps.setString(3, bio);
+					ps.setString(5, password);
 					
 					int result = ps.executeUpdate();
 					
 					if(result > 0)
 					{
 						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
-						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
+						ps = con.prepareStatement(
+								"insert into credentials (username,password,type) values (?,?," + SPONSOR + ")");
+						ps.setString(1, email);
+						ps.setString(2, password);
+						
+						result = ps.executeUpdate();
+						if(result > 0)
+						{
+							System.out.println("SQL Query Executed successfully. Records inserted in credentials----"  + result);
+						}
 					}
 
 				} 
@@ -261,7 +380,9 @@ public class credentialService
 			}
 	
 	/**
-	 * Submits values to the advertiser registration table.
+	 * Submits values to the advertiser registration table
+	 * and simultaneously creates a new entry in credentials
+	 * table for the user.
 	 * 
 	 * @param name
 	 * @param company
@@ -269,6 +390,7 @@ public class credentialService
 	 * @param products
 	 * @param plan
 	 * @param bio
+	 * @param password
 	 * @throws SQLException
 	 */
 	@POST
@@ -278,7 +400,8 @@ public class credentialService
 			@FormParam("q2") String company,
 			@FormParam("q3") String email,@FormParam("q4") String products,
 			@FormParam("q5") String plan,
-			@FormParam("q6") String bio)
+			@FormParam("q6") String bio,
+			@FormParam("q7") String password)
 			throws SQLException 
 			{
 				PreparedStatement ps = null;
@@ -289,7 +412,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into advertiser (name,company,email,products,plan,bio) values (?,?,?,?,?,?)");
+							"insert into advertiser (name,company,email,products,plan,bio,password) values (?,?,?,?,?,?,?)");
 		
 					ps.setString(1, name);
 					ps.setString(2, company);
@@ -297,13 +420,23 @@ public class credentialService
 					ps.setString(4, products);
 					ps.setString(5, plan);
 					ps.setString(6, bio);
+					ps.setString(6, password);
 					
 					int result = ps.executeUpdate();
 					
 					if(result > 0)
 					{
 						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
-						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
+						ps = con.prepareStatement(
+								"insert into credentials (username,password,type) values (?,?," + ADVERTISER + ")");
+						ps.setString(1, email);
+						ps.setString(2, password);
+						
+						result = ps.executeUpdate();
+						if(result > 0)
+						{
+							System.out.println("SQL Query Executed successfully. Records inserted in credentials----"  + result);
+						}
 					}
 
 				} 

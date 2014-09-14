@@ -7,3 +7,6 @@ CREATE TABLE `heroku_4265740aecd0c5d`.`advertiser` (
   `bio` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`email`))
 COMMENT = 'advertiser profile table.';
+
+ALTER TABLE `heroku_4265740aecd0c5d`.`advertiser` 
+ADD COLUMN `password` VARCHAR(50) NOT NULL AFTER `bio`;

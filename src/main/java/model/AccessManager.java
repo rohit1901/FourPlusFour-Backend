@@ -27,4 +27,13 @@ public class AccessManager
 		int amount = access.getSponsorAmount(username, con);
 		return amount;
 	}
+	
+	public int countName(String email, String type) throws Exception
+	{
+		Database db = new Database();
+		Connection con = db.getConnection();
+		Access access = new Access();
+		int countName = access.countName(email, type, con);
+		return countName;
+	}
 }

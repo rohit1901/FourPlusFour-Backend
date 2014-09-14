@@ -9,3 +9,7 @@ CREATE TABLE `heroku_4265740aecd0c5d`.`child` (
   `testLevel` INT NULL,
   PRIMARY KEY (`email`))
 COMMENT = 'Child profile table.';
+
+ALTER TABLE `heroku_4265740aecd0c5d`.`child` 
+CHANGE COLUMN `testLevel` `testLevel` INT(11) NOT NULL ,
+ADD COLUMN `password` VARCHAR(50) NOT NULL AFTER `testLevel`;
