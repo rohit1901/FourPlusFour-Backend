@@ -182,7 +182,7 @@ public class credentialService
 	 */
 	@GET
 	@Path("/getAllAdvertisements")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllAdvertisements(@QueryParam("email") String email) 
 	{
