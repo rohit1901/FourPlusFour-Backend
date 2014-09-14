@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import dao.Access;
 import dao.Database;
+import dto.Advertisements;
 import dto.Credentials;
 
 public class AccessManager 
@@ -35,5 +36,15 @@ public class AccessManager
 		Access access = new Access();
 		int countName = access.countName(email, type, con);
 		return countName;
+	}
+	
+	public ArrayList<Advertisements> getAdvertisements(String email) throws Exception
+	{
+		ArrayList<Advertisements> advertisements = new ArrayList<Advertisements>();
+		Database db = new Database();
+		Connection con = db.getConnection();
+		Access access = new Access();
+		advertisements = access.getAdvertisements(email, con);
+		return advertisements;
 	}
 }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import dto.Advertisements;
 import dto.Credentials;
 
 public class Access 
@@ -43,6 +44,52 @@ public class Access
 			con.close();
 		}
 		return credentialList;
+
+	}
+	
+	
+	/**
+	 * Gets all advertisements for an advertiser from the database.
+	 * 
+	 * @param email
+	 * @param con
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<Advertisements> getAdvertisements(String email, Connection con)
+			throws SQLException {
+		ArrayList<Advertisements> advertisementsList = new ArrayList<Advertisements>();
+		PreparedStatement stmt = con.prepareStatement("SELECT count(*) FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
+		/*PreparedStatement stmt = con
+				.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");*/
+		ResultSet rs = stmt.executeQuery();
+		try 
+		{
+			if(rs.getInt("count(*)") != 0)
+			{
+				stmt = con.prepareStatement("SELECT * FROM heroku_4265740aecd0c5d.advertisements where email='" + email + "'");
+				rs = stmt.executeQuery();
+				while (rs.next()) 
+				{
+					Advertisements advertisementObj = new Advertisements();
+					advertisementObj.setEmail(rs.getString("email"));
+					advertisementObj.setDate(rs.getString("date"));
+					advertisementObj.setPlan(rs.getString("plan"));
+					advertisementObj.setProduct(rs.getString("product"));
+					advertisementObj.setUsedAt(rs.getString("usedAt"));
+					advertisementsList.add(advertisementObj);
+				}
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		finally 
+		{
+			con.close();
+		}
+		return advertisementsList;
 
 	}
 	

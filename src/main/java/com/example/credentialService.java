@@ -38,6 +38,7 @@ import org.glassfish.jersey.internal.util.Base64;
 import com.google.gson.Gson;
 
 import dao.Database;
+import dto.Advertisements;
 import dto.Credentials;
 
 @Path("/credentialService")
@@ -171,6 +172,33 @@ public class credentialService
 			e.printStackTrace();
 		}
 		return FALSE;
+	}
+	
+	/**
+	 * Gets all advertisements for an advertiser.
+	 * 
+	 * @param email
+	 * @return
+	 */
+	@GET
+	@Path("/getAllAdvertisements")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAllAdvertisements(@QueryParam("email") String email) 
+	{
+		String advertisements = null;
+		ArrayList<Advertisements> advertisementList = new ArrayList<Advertisements>();
+		try 
+		{
+			advertisementList = new AccessManager().getAdvertisements(email);
+			Gson gson = new Gson();
+			advertisements = gson.toJson(advertisementList);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return advertisements;
 	}
 
 
