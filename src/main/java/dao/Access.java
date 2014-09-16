@@ -127,7 +127,7 @@ public class Access
 		PreparedStatement stmt;
 		try 
 		{
-			stmt = con.prepareStatement("SELECT count(name) FROM heroku_4265740aecd0c5d." + type + "where email='" + email + "'");
+			stmt = con.prepareStatement("SELECT count(name) FROM heroku_4265740aecd0c5d.'" + type + "' where email='" + email + "'");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next())
 			{
