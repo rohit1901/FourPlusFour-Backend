@@ -152,26 +152,26 @@ public class credentialService
 	 * @return
 	 */
 	@GET
-	@Path("/checkDuplicateUser")
+	@Path("/duplicateUserExists")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String checkDuplicateUser(@QueryParam("email") String email, @QueryParam("type") String type) 
+	public String duplicateUserExists(@QueryParam("email") String email, @QueryParam("type") String type) 
 	{
-		int countName = 0;
+		int countEmail = 0;
 		try 
 		{
-			countName = new AccessManager().countName(email, type);
+			countEmail = new AccessManager().countEmail(email, type);
 			
-			if(countName == 0)
+			if(countEmail == 0)
 			{
-				return TRUE;
+				return FALSE;
 			}
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
-		return FALSE;
+		return TRUE;
 	}
 	
 	/**
