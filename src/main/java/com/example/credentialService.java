@@ -314,7 +314,7 @@ public class credentialService
 					ps.setString(4, address);
 					ps.setString(5, email);
 					ps.setString(6, bio);
-					ps.setString(9, password);
+					ps.setString(7, password);
 					
 					int result = ps.executeUpdate();
 					
@@ -379,7 +379,7 @@ public class credentialService
 					ps.setString(1, name);
 					ps.setString(2, email);
 					ps.setString(3, bio);
-					ps.setString(5, password);
+					ps.setString(4, password);
 					
 					int result = ps.executeUpdate();
 					
