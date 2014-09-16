@@ -306,7 +306,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into child (name,age,school,address,email,bio,type,testLevel,password) values (?,?,?,?,?,?,'" + CHILD + "'," + ZERO + ",?)");
+							"insert into child (name,age,school,address,email,bio,type,testLevel,password) values (?,?,?,?,?,?,'" + CHILD + "','" + ZERO + "',?)");
 		
 					ps.setString(1, name);
 					ps.setInt(2, age);
@@ -323,7 +323,7 @@ public class credentialService
 						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
 						//sendRegistrationLinkStatus = sendEmail(email, hashValue);
 						ps = con.prepareStatement(
-								"insert into credentials (username,password,type) values (?,?," + CHILD + ")");
+								"insert into credentials (username,password,type) values (?,?,'" + CHILD + "')");
 						ps.setString(1, email);
 						ps.setString(2, password);
 						
@@ -387,7 +387,7 @@ public class credentialService
 					{
 						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
 						ps = con.prepareStatement(
-								"insert into credentials (username,password,type) values (?,?," + SPONSOR + ")");
+								"insert into credentials (username,password,type) values (?,?,'" + SPONSOR + "')");
 						ps.setString(1, email);
 						ps.setString(2, password);
 						
@@ -459,7 +459,7 @@ public class credentialService
 					{
 						System.out.println("SQL Query Executed successfully. Records inserted----"  + result);
 						ps = con.prepareStatement(
-								"insert into credentials (username,password,type) values (?,?," + ADVERTISER + ")");
+								"insert into credentials (username,password,type) values (?,?,'" + ADVERTISER + "')");
 						ps.setString(1, email);
 						ps.setString(2, password);
 						
