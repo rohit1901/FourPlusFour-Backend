@@ -121,17 +121,17 @@ public class Access
 		return amount;
 	}
 	
-	public int countName(String email, String type, Connection con)
+	public int countEmail(String email, String type, Connection con)
 	{
-		int countName = 0;
+		int countEmail = 0;
 		PreparedStatement stmt;
 		try 
 		{
-			stmt = con.prepareStatement("SELECT count(name) FROM heroku_4265740aecd0c5d.'" + type + "' where email='" + email + "'");
+			stmt = con.prepareStatement("SELECT count(email) FROM heroku_4265740aecd0c5d." + type + " where email='" + email + "'");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next())
 			{
-				countName = rs.getInt("count(name)");
+				countEmail = rs.getInt("count(email)");
 			}
 		} 
 		catch (SQLException e) 
@@ -140,6 +140,6 @@ public class Access
 			e.printStackTrace();
 		}
 		
-		return countName;
+		return countEmail;
 	}
 }
