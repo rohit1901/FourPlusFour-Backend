@@ -451,7 +451,7 @@ public class credentialService
 					ps.setString(4, products);
 					ps.setString(5, plan);
 					ps.setString(6, bio);
-					ps.setString(6, password);
+					ps.setString(7, password);
 					
 					int result = ps.executeUpdate();
 					
