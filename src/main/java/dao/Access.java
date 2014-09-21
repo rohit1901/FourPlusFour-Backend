@@ -99,6 +99,28 @@ public class Access
 
 	}
 	
+	public int getLevel(String username, Connection con)
+	{
+		int level = -1;
+		PreparedStatement stmt;
+		try 
+		{
+			stmt = con.prepareStatement("SELECT testLevel FROM heroku_4265740aecd0c5d.child where email='" + username + "'");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next())
+			{
+				level = rs.getInt("testLevel");
+			}
+		} 
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return level;
+	}
+	
 	public int getSponsorAmount(String username, Connection con)
 	{
 		int amount = 0;

@@ -115,6 +115,31 @@ public class credentialService
 		return FALSE;
 	}
 	
+	/**
+	 * Gets the level entered by a child.
+	 * 
+	 * @param username
+	 * @return
+	 */
+	@GET
+	@Path("/getLevel")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getLevel(@QueryParam("username") String username) 
+	{
+		int level = -1;
+		
+		try 
+		{
+			level = new AccessManager().getLevel(username);
+			return ("" + level + "");
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return ("" + level + "");
+	}
 	
 	/**
 	 * Gets the amount sponsored by a sponsor.
