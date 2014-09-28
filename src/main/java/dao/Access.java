@@ -168,11 +168,11 @@ public class Access
 		PreparedStatement stmt;
 		try 
 		{
-			stmt = con.prepareStatement("SELECT count(*) from FROM heroku_4265740aecd0c5d.level where email = '" + email + "' AND learnLevel = " + learnLevel + " AND subject = '" + subject + "'");
+			stmt = con.prepareStatement("SELECT count(email) FROM heroku_4265740aecd0c5d.level where email = '" + email + "' AND learnLevel = " + learnLevel + " AND subject = '" + subject + "'");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next())
 			{
-				countLearnLevel = rs.getInt("count(*)");
+				countLearnLevel = rs.getInt("count(email)");
 			}
 		} 
 		catch (Exception e) 

@@ -52,8 +52,8 @@ public class AccessManager
 		Database db = new Database();
 		Connection con = db.getConnection();
 		Access access = new Access();
-		int countEmail = access.countLearnLevel(email, learnLevel, subject, con);
-		return countEmail;
+		int countLearnLevel = access.countLearnLevel(email, learnLevel, subject, con);
+		return countLearnLevel;
 	}
 	
 	public ArrayList<Advertisements> getAdvertisements(String email) throws Exception

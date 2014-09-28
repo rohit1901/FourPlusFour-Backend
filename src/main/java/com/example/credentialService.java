@@ -252,9 +252,7 @@ public class credentialService
 	@Produces(MediaType.APPLICATION_JSON)
 	public String updateLearnLevel(@QueryParam("email") String email, @QueryParam("level") String level, @QueryParam("subject") String subject) throws SQLException 
 	{
-		/*
-		 * select count(*) from level where email=email and learnLevel = level and subject=subject
-		 */
+
 		int learnLevel = Integer.parseInt(level);
 		int countDuplicate = 0;
 		
