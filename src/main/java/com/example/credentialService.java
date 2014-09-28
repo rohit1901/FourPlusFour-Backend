@@ -48,13 +48,29 @@ public class credentialService
 	public static final String CHILD = "child";
 	public static final String ADVERTISER = "advertiser";
 	public static final String SPONSOR = "sponsor";
+	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	public static final String SPACE = " ";
 	
+	public static final String ENGLISH = "english";
+	public static final String MATHS = "maths";
+	public static final String SCIENCE = "science";
+	public static final String GK = "gk";
+	public static final String GEOGRAPHY = "geography";
+	public static final String MUSIC = "music";
+	public static final String COMPUTERS = "computers";
+	
+	public static final String[] SUBJECTS = {ENGLISH,MATHS,SCIENCE,GK,GEOGRAPHY,MUSIC,COMPUTERS};
+	
 	public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	public static int ZERO = 0; 
+	public static int ZERO = 0;
+	public static int ONE = 1;
+	public static int TWO = 2;
+	public static int THREE = 3;
+	public static int FOUR = 4;
+	public static int FIVE = 5;
 	
 	private boolean updateFlag = false;
 
@@ -230,6 +246,73 @@ public class credentialService
 	}
 
 
+	@GET
+	@Path("/updateLearnLevel")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String updateLearnLevel(@QueryParam("email") String email, @QueryParam("level") String level, @QueryParam("subject") String subject) throws SQLException 
+	{
+		/*
+		 * select count(*) from level where email=email and learnLevel = level and subject=subject
+		 */
+		int learnLevel = Integer.parseInt(level);
+		int countDuplicate = 0;
+		
+		PreparedStatement ps = null;
+		Connection con = null;
+		Database db = new Database();
+		
+		
+		try 
+		{
+			countDuplicate = new AccessManager().countLearnLevel(email, learnLevel, subject);
+			
+			if(countDuplicate == 0)
+			{
+				con = db.getConnection();
+				ps = con.prepareStatement(
+						"insert into level (email,learnLevel,testLevel,subject) values (?,?," + ZERO + ",?)");
+				
+				ps.setString(1, email);
+				ps.setInt(2, learnLevel);
+				ps.setString(3, subject);
+				
+				int result = ps.executeUpdate();
+				
+				if(result > 0)
+				{
+					System.out.println("SQL Query Executed successfully. Records inserted in level----"  + result);
+					return TRUE;
+				}
+
+			}	
+			else if(countDuplicate > 0)
+			{
+				con = db.getConnection();
+				ps = con.prepareStatement(
+						"UPDATE level SET learnLevel = " + learnLevel + " where email = '"  + email + "' AND subject = '" + subject + "'");
+				
+				int result = ps.executeUpdate();
+				
+				if(result > 0)
+				{
+					System.out.println("SQL update Executed successfully. Records updated in level----"  + result);
+					return TRUE;
+				}
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			con.close();
+		}
+		return FALSE;
+	}
+	
+	
 	/**
 	 * creates an advertisement for today's date.
 	 * 
@@ -291,7 +374,8 @@ public class credentialService
 	/**
 	 * Submits values to the student registration table
 	 * and simultaneously creates a new entry in credentials
-	 * table for the user.
+	 * table for the user. In addition to that, creates an entry per
+	 * subject in the level table.
 	 * 
 	 * @param name
 	 * @param age
@@ -300,6 +384,9 @@ public class credentialService
 	 * @param email
 	 * @param bio
 	 * @param password
+	 * @param testLevel
+	 * @param father
+	 * @param teacher
 	 * @throws SQLException
 	 */
 	@POST
@@ -311,7 +398,10 @@ public class credentialService
 			@FormParam("q4") String address,
 			@FormParam("q5") String email,
 			@FormParam("q6") String bio,
-			@FormParam("q7") String password)
+			@FormParam("q7") String password,
+			@FormParam("q8") String testLevel,
+			@FormParam("q9") String father,
+			@FormParam("q10") String teacher)
 			throws SQLException 
 			{
 				PreparedStatement ps = null;
@@ -331,7 +421,7 @@ public class credentialService
 		
 					con = db.getConnection();
 					ps = con.prepareStatement(
-							"insert into child (name,age,school,address,email,bio,type,testLevel,password) values (?,?,?,?,?,?,'" + CHILD + "','" + ZERO + "',?)");
+							"insert into child (name,age,school,address,email,bio,type,testLevel,password) values (?,?,?,?,?,?,'" + CHILD + "',?,?)");
 		
 					ps.setString(1, name);
 					ps.setInt(2, age);
@@ -339,7 +429,8 @@ public class credentialService
 					ps.setString(4, address);
 					ps.setString(5, email);
 					ps.setString(6, bio);
-					ps.setString(7, password);
+					ps.setString(7, testLevel);
+					ps.setString(8, password);
 					
 					int result = ps.executeUpdate();
 					
@@ -356,6 +447,21 @@ public class credentialService
 						if(result > 0)
 						{
 							System.out.println("SQL Query Executed successfully. Records inserted in credentials----"  + result);
+							
+							for(int i=0; i<6; i++)
+							{
+								ps = con.prepareStatement(
+										"insert into level (email,testLevel,learnLevel,subject) values (?,?,?,'" + SUBJECTS[i] + "')");
+								ps.setString(1, email);
+								ps.setString(2, testLevel);
+								ps.setString(3, testLevel);
+								
+								result = ps.executeUpdate();
+								if(result > 0)
+								{
+									System.out.println("SQL Query Executed successfully. Records inserted in level----"  + result);
+								}
+							}
 						}
 					}
 

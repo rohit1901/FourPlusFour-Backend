@@ -47,6 +47,15 @@ public class AccessManager
 		return countEmail;
 	}
 	
+	public int countLearnLevel(String email, int learnLevel, String subject) throws Exception
+	{
+		Database db = new Database();
+		Connection con = db.getConnection();
+		Access access = new Access();
+		int countEmail = access.countLearnLevel(email, learnLevel, subject, con);
+		return countEmail;
+	}
+	
 	public ArrayList<Advertisements> getAdvertisements(String email) throws Exception
 	{
 		ArrayList<Advertisements> advertisements = new ArrayList<Advertisements>();

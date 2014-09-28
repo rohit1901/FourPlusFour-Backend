@@ -114,7 +114,6 @@ public class Access
 		} 
 		catch (SQLException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -136,7 +135,6 @@ public class Access
 		} 
 		catch (SQLException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -158,10 +156,30 @@ public class Access
 		} 
 		catch (SQLException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return countEmail;
+	}
+	
+	public int countLearnLevel(String email, int learnLevel, String subject, Connection con)
+	{
+		int countLearnLevel = 0;
+		PreparedStatement stmt;
+		try 
+		{
+			stmt = con.prepareStatement("SELECT count(*) from FROM heroku_4265740aecd0c5d.level where email = '" + email + "' AND learnLevel = " + learnLevel + " AND subject = '" + subject + "'");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next())
+			{
+				countLearnLevel = rs.getInt("count(*)");
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return countLearnLevel;
 	}
 }
