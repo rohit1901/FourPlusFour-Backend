@@ -162,17 +162,17 @@ public class Access
 		return countEmail;
 	}
 	
-	public int countLearnLevel(String email, int learnLevel, String subject, Connection con)
+	public int countLearnLevel(String email, String subject, Connection con)
 	{
 		int countLearnLevel = 0;
 		PreparedStatement stmt;
 		try 
 		{
-			stmt = con.prepareStatement("SELECT count(email) FROM heroku_4265740aecd0c5d.level where email = '" + email + "' AND learnLevel = " + learnLevel + " AND subject = '" + subject + "'");
+			stmt = con.prepareStatement("SELECT count(learnLevel) FROM heroku_4265740aecd0c5d.level where email = '" + email + "' AND subject = '" + subject + "'");
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next())
 			{
-				countLearnLevel = rs.getInt("count(email)");
+				countLearnLevel = rs.getInt("count(learnLevel)");
 			}
 		} 
 		catch (Exception e) 
@@ -181,5 +181,26 @@ public class Access
 		}
 		
 		return countLearnLevel;
+	}
+	
+	public int countTestLevel(String email, String subject, Connection con)
+	{
+		int countTestLevel = 0;
+		PreparedStatement stmt;
+		try 
+		{
+			stmt = con.prepareStatement("SELECT count(testLevel) FROM heroku_4265740aecd0c5d.level where email = '" + email + "' AND subject = '" + subject + "'");
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next())
+			{
+				countTestLevel = rs.getInt("count(testLevel)");
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return countTestLevel;
 	}
 }
