@@ -246,6 +246,15 @@ public class credentialService
 	}
 
 
+    /**
+	 * Checks the existance of a record in level table with the passed email and subject.
+	 * If such a tuple exists, updates the learnLevel otherwise creates a new tuple.
+	 *
+	 * @param email
+	 * @param level
+	 * @param subject
+	 * @return
+	 */
 	@GET
 	@Path("/updateLearnLevel")
 	@Consumes(MediaType.TEXT_PLAIN)
@@ -254,7 +263,7 @@ public class credentialService
 	{
 
 		int learnLevel = Integer.parseInt(level);
-		int countDuplicate = 0;
+		int countDuplicateSubjectLevelForMember = 0;
 		
 		PreparedStatement ps = null;
 		Connection con = null;
@@ -263,9 +272,9 @@ public class credentialService
 		
 		try 
 		{
-			countDuplicate = new AccessManager().countLearnLevel(email, learnLevel, subject);
+			countDuplicateSubjectLevelForMember = new AccessManager().countLearnLevel(email, subject);
 			
-			if(countDuplicate == 0)
+			if(countDuplicateSubjectLevelForMember == 0)
 			{
 				con = db.getConnection();
 				ps = con.prepareStatement(
@@ -284,11 +293,85 @@ public class credentialService
 				}
 
 			}	
-			else if(countDuplicate > 0)
+			else if(countDuplicateSubjectLevelForMember > 0)
 			{
 				con = db.getConnection();
 				ps = con.prepareStatement(
 						"UPDATE level SET learnLevel = " + learnLevel + " where email = '"  + email + "' AND subject = '" + subject + "'");
+				
+				int result = ps.executeUpdate();
+				
+				if(result > 0)
+				{
+					System.out.println("SQL update Executed successfully. Records updated in level----"  + result);
+					return TRUE;
+				}
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			con.close();
+		}
+		return FALSE;
+	}
+	
+	
+    /**
+	 * Checks the existance of a record in level table with the passed email and subject.
+	 * If such a tuple exists, updates the testLevel otherwise creates a new tuple.
+	 *
+	 * @param email
+	 * @param level
+	 * @param subject
+	 * @return
+	 */
+	@GET
+	@Path("/updateTestLevel")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String updateTestLevel(@QueryParam("email") String email, @QueryParam("level") String level, @QueryParam("subject") String subject) throws SQLException 
+	{
+
+		int testLevel = Integer.parseInt(level);
+		int countDuplicateSubjectLevelForMember = 0;
+		
+		PreparedStatement ps = null;
+		Connection con = null;
+		Database db = new Database();
+		
+		
+		try 
+		{
+			countDuplicateSubjectLevelForMember = new AccessManager().countTestLevel(email, subject);
+			
+			if(countDuplicateSubjectLevelForMember == 0)
+			{
+				con = db.getConnection();
+				ps = con.prepareStatement(
+						"insert into level (email,learnLevel,testLevel,subject) values (?," + ZERO + ",?,?)");
+				
+				ps.setString(1, email);
+				ps.setInt(2, testLevel);
+				ps.setString(3, subject);
+				
+				int result = ps.executeUpdate();
+				
+				if(result > 0)
+				{
+					System.out.println("SQL Query Executed successfully. Records inserted in level----"  + result);
+					return TRUE;
+				}
+
+			}	
+			else if(countDuplicateSubjectLevelForMember > 0)
+			{
+				con = db.getConnection();
+				ps = con.prepareStatement(
+						"UPDATE level SET testLevel = " + testLevel + " where email = '"  + email + "' AND subject = '" + subject + "'");
 				
 				int result = ps.executeUpdate();
 				
