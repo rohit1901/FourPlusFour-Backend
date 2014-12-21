@@ -821,8 +821,8 @@ public class credentialService
 		System.out.println("\n\n 2nd ===> get Mail Session..");
 		getMailSession = Session.getDefaultInstance(mailServerProperties, null);
 		generateMailMessage = new MimeMessage(getMailSession);
+		generateMailMessage.setFrom(new InternetAddress("noreply@rohitkhanduri.com"));
 		generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress("rohit.khanduri@hotmail.com"));
-		generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress("rohit.khanduri@hotmail.com"));
 		generateMailMessage.setSubject("Greetings from Crunchify..");
 		String emailBody = "Test email by Crunchify.com JavaMail API example. " + "<br><br> Regards, <br>Crunchify Admin";
 		generateMailMessage.setContent(emailBody, "text/html");
@@ -833,7 +833,7 @@ public class credentialService
 		Transport transport = getMailSession.getTransport("smtp");
 		
 		// Enter your correct gmail UserID and Password (XXXarpitshah@gmail.com)
-		transport.connect("smtpout.secureserver.net", "rohitkhanduri", "Rohit1901!");
+		transport.connect("relay-hosting.smtpout.secureserver.net", "noreply@rohitkhanduri.com", "Rohit1901!");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
 		System.out.println("---------------------Email sent---------------------");
