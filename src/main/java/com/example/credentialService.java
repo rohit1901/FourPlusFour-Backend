@@ -812,7 +812,7 @@ public class credentialService
 		{
 		System.out.println("\n 1st ===> setup Mail Server Properties..");
 		mailServerProperties = System.getProperties();
-		mailServerProperties.put("mail.smtp.port", "25");
+		mailServerProperties.put("mail.smtp.port", "3535");
 		mailServerProperties.put("mail.smtp.auth", "true");
 		mailServerProperties.put("mail.smtp.starttls.enable", "true");
 		System.out.println("Mail Server Properties have been setup successfully..");
@@ -833,7 +833,7 @@ public class credentialService
 		Transport transport = getMailSession.getTransport("smtp");
 		
 		// Enter your correct gmail UserID and Password (XXXarpitshah@gmail.com)
-		transport.connect("relay-hosting.smtpout.secureserver.net", "noreply@rohitkhanduri.com", "Rohit1901!");
+		transport.connect("smtpout.secureserver.net", "noreply@rohitkhanduri.com", "Rohit1901!");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
 		System.out.println("---------------------Email sent---------------------");
