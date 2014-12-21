@@ -804,7 +804,7 @@ public class credentialService
 			@FormParam("phonenumber") String phonenumber,
 			@FormParam("input-textArea") String text) 
 	{
-		final String username = "noreply@rohitkhanduri.com";
+		final String username = "noreply";
 		final String password = "Rohit1901!";
 		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
 		
