@@ -808,17 +808,16 @@ public class credentialService
 		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
 		
 		final String SMTP_HOST_NAME = "smtpout.secureserver.net"; //smtp URL
-		final int SMTP_HOST_PORT = 25; //port number
-		final String SMTP_AUTH_USER = "noreply@rohitkhanduri.com"; //email_id of sender
+		final int SMTP_HOST_PORT = 465; //port number
+		final String SMTP_AUTH_USER = "rohitkhanduri"; //email_id of sender
 		final String SMTP_AUTH_PWD = "Rohit1901!"; //password of sender email_id
 
 		try 
 		{
 		    Properties props = new Properties();
-		    props.put("mail.transport.protocol", "smtp");
-		    props.put("mail.smtp.host", SMTP_HOST_NAME);
-		    props.put("mail.smtp.auth", "true");
-		    props.put("mail.smtp.starttls.enable", "true");
+		    props.put("mail.transport.protocol", "smtps");
+		    props.put("mail.smtps.host", SMTP_HOST_NAME);
+		    props.put("mail.smtps.auth", "true");
 
 		    Session mailSession = Session.getDefaultInstance(props);
 		    mailSession.setDebug(true);
