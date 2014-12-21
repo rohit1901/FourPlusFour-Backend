@@ -814,7 +814,7 @@ public class credentialService
 		try 
 		{
 		    Properties props = new Properties();
-		    props.put("mail.transport.protocol", "smtps");
+		    props.put("mail.transport.protocol", "smtp");
 		    props.put("mail.smtps.host", SMTP_HOST_NAME);
 		    props.put("mail.smtps.auth", "true");
 
