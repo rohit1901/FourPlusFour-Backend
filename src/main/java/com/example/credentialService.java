@@ -833,7 +833,7 @@ public class credentialService
 		Transport transport = getMailSession.getTransport("smtp");
 		
 		// Enter your correct gmail UserID and Password (XXXarpitshah@gmail.com)
-		transport.connect("smtpout.secureserver.net", "noreply@rohitkhanduri.com", "Rohit1901!");
+		transport.connect("smtpout.secureserver.net", "rohitkhanduri", "Rohit1901!");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
 		System.out.println("---------------------Email sent---------------------");
