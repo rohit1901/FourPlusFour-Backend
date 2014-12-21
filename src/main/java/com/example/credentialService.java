@@ -15,6 +15,7 @@ import java.util.Random;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -735,6 +736,7 @@ public class credentialService
 		final String username = "noreply@tabletribes.com";
 		final String password = "TT1s@wesome";
 		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
+		
 		Properties prop = new Properties();
 		prop.put("mail.smtp.auth", "true");
 		prop.put("mail.smtp.host", "box260.bluehost.com");
@@ -776,6 +778,65 @@ public class credentialService
 			return true;
 
 		} catch (MessagingException e) {
+			System.out.println("Error while sending new enquiry email due to: "
+					+ e);
+		}
+		return false;
+	}
+	
+	/**
+	 * Sends email from noreply@rohitkhanduri.com to user's email address for
+	 * registration
+	 * 
+	 * @param email
+	 * @param hashValue
+	 * @return
+	 */
+	@POST
+	@Path("/sendEmailFromGodaddy")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	private boolean sendEmailFromGodaddy(@FormParam("title") String title,
+			@FormParam("fullname") String fullname,
+			@FormParam("email_address") String email_address,
+			@FormParam("birthdate") Date birthdate,
+			@FormParam("country") String country,
+			@FormParam("phonenumber") String phonenumber,
+			@FormParam("input-textArea") String text) 
+	{
+		final String sourceEmailAddress = "noreply@rohitkhanduri.com";
+		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
+		
+		final String SMTP_HOST_NAME = "smtpout.asia.secureserver.net"; //smtp URL
+		final int SMTP_HOST_PORT = 465; //port number
+		final String SMTP_AUTH_USER = "rohitkhanduri"; //email_id of sender
+		final String SMTP_AUTH_PWD = "Rohit1901!"; //password of sender email_id
+
+		try 
+		{
+		    Properties props = new Properties();
+		    props.put("mail.transport.protocol", "smtps");
+		    props.put("mail.smtps.host", SMTP_HOST_NAME);
+		    props.put("mail.smtps.auth", "true");
+
+		    Session mailSession = Session.getDefaultInstance(props);
+		    mailSession.setDebug(true);
+		    Transport transport = mailSession.getTransport();
+		    MimeMessage message = new MimeMessage(mailSession);
+
+		    message.setSubject("New Enquiry");
+		    message.setContent("Message that you want to send", "text/html");
+		    Address[] from = InternetAddress.parse(sourceEmailAddress);//Your domain email
+		    message.addFrom(from);
+		    message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinationEmailAddress)); //Send email To (Type email ID that you want to send)
+
+		    transport.connect(SMTP_HOST_NAME, SMTP_HOST_PORT, SMTP_AUTH_USER, SMTP_AUTH_PWD);
+		    transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+		    transport.close();
+		    
+		    return true;
+		} 
+		catch (Exception e)
+		{
 			System.out.println("Error while sending new enquiry email due to: "
 					+ e);
 		}
