@@ -804,48 +804,40 @@ public class credentialService
 			@FormParam("phonenumber") String phonenumber,
 			@FormParam("input-textArea") String text) 
 	{
-		final String username = "noreply";
-		final String password = "Rohit1901!";
-		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
+		Properties mailServerProperties;
+		Session getMailSession;
+		MimeMessage generateMailMessage;
 		
-		Properties prop = new Properties();
-		prop.put("mail.smtp.auth", "true");
-		prop.put("mail.smtp.host", "smtpout.secureserver.net");
-		prop.put("mail.smtp.port", "25");
-		prop.put("mail.smtp.starttls.enable", "true");
-		Session session = Session.getDefaultInstance(prop,
-				new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(username, password);
-					}
-				});
-
-		try {
-
-			String body = "Mail Body";
-			String htmlBody = "<strong>Name: " + fullname + ", email: "
-					+ email_address + ", country: " + country + ", message: "
-					+ text + "</strong>";
-			String textBody = "Name: " + fullname + ", email: " + email_address
-					+ ", country: " + country + ", message: " + text;
-			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("info@tabletribes.com"));
-			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(destinationEmailAddress));
-			message.setSubject("New Enquiry");
-			MailcapCommandMap mc = (MailcapCommandMap) CommandMap
-					.getDefaultCommandMap();
-			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-			CommandMap.setDefaultCommandMap(mc);
-			message.setText(htmlBody);
-			message.setContent(textBody, "text/html");
-			Transport.send(message);
-			System.out.println("---------------------Email sent successfully---------------------");
-
+		try
+		{
+		System.out.println("\n 1st ===> setup Mail Server Properties..");
+		mailServerProperties = System.getProperties();
+		mailServerProperties.put("mail.smtp.port", "25");
+		mailServerProperties.put("mail.smtp.auth", "true");
+		mailServerProperties.put("mail.smtp.starttls.enable", "true");
+		System.out.println("Mail Server Properties have been setup successfully..");
+ 
+//Step2		
+		System.out.println("\n\n 2nd ===> get Mail Session..");
+		getMailSession = Session.getDefaultInstance(mailServerProperties, null);
+		generateMailMessage = new MimeMessage(getMailSession);
+		generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress("rohit.khanduri@hotmail.com"));
+		generateMailMessage.addRecipient(Message.RecipientType.CC, new InternetAddress("rohit.khanduri@hotmail.com"));
+		generateMailMessage.setSubject("Greetings from Crunchify..");
+		String emailBody = "Test email by Crunchify.com JavaMail API example. " + "<br><br> Regards, <br>Crunchify Admin";
+		generateMailMessage.setContent(emailBody, "text/html");
+		System.out.println("Mail Session has been created successfully..");
+ 
+//Step3		
+		System.out.println("\n\n 3rd ===> Get Session and Send mail");
+		Transport transport = getMailSession.getTransport("smtp");
+		
+		// Enter your correct gmail UserID and Password (XXXarpitshah@gmail.com)
+		transport.connect("smtpout.secureserver.net", "noreply@rohitkhanduri.com", "Rohit1901!");
+		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
+		transport.close();
+		System.out.println("---------------------Email not sent---------------------");
+		
 		} 
 		catch (Exception e)
 		{
