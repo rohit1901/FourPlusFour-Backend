@@ -693,142 +693,8 @@ public class credentialService
 					con.close();
 				}
 			}
-	/**
-	 * @param key
-	 * @throws SQLException
-	 */
-	@POST
-	@Path("/registerUser")
-	@Consumes(MediaType.TEXT_PLAIN)
-	public void registerUser(@QueryParam("key") String key) throws SQLException
-	{
-		Statement ps = null;
-		Connection con = null;
-		
-		PreparedStatement psReg = null;
-		Connection conReg = null;
-		
-		String hashValue = new String(Base64.decode(key.getBytes()));
-		
-		Database db = new Database();
-		try 
-		{
-			con = db.getConnection();
-			ps = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = ps.executeQuery("select * from tempregistration where tempregistration.email = '" + hashValue + "'");
-
-			if (rs.next()) 
-			{
-
-				String firstName = rs.getString("firstName");
-				String lastName = rs.getString("lastName");
-				String homeTown = rs.getString("homeTown");
-				Date dateOfBirth = rs.getDate("dateOfBirth");
-				String email = rs.getString("email");
-				String password = rs.getString("password");
-				String bio = rs.getString("bio");
-//				System.out.println(rs.toString());
-
-				rs.deleteRow();
-				System.out.println("Successfully removed tempRegistration entry from Database.");
-				
-				conReg = db.getConnection();
-				psReg = conReg.prepareStatement(
-						"insert into registration (firstName,lastName,homeTown,dateOfBirth,email,password,bio) values (?,?,?,?,?,?,?)");
-
-				psReg.setString(1, firstName);
-				psReg.setString(2, lastName);
-				psReg.setString(3, homeTown);
-				psReg.setDate(4, dateOfBirth);
-				psReg.setString(5, email);
-				psReg.setString(6, password);
-				psReg.setString(7, bio);
-				System.out.println(psReg.toString());
-
-				int result = psReg.executeUpdate();
-				
-				if(result > 0)
-				{
-					System.out.println("Successfully registered user. \nrecords affected --------------------- "  + result);
-				}
-			}
-			
-			
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("Failure registering user due to: " + e);
-		}
-		finally 
-		{
-			if (con != null && conReg !=null) 
-			{
-				con.close();
-				conReg.close();
-			}
-			
-		}
-	}
 	
-	@POST
-	@Path("/tempRegisterUser")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void tempRegisterUser(@FormParam("firstName") String firstName,
-			@FormParam("lastName") String lastName,
-			@FormParam("homeTown") String homeTown,
-			@FormParam("dateOfBirth") Date dateOfBirth,
-			@FormParam("email") String email,
-			@FormParam("password") String password,
-			@FormParam("bio") String bio)
-			throws SQLException 
-			{
-				PreparedStatement ps = null;
-				Connection con = null;
-				
-				String hashValue;
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Calendar registrationDateTime = Calendar.getInstance();
-												
-				Boolean sendRegistrationLinkStatus = false;
-				
-				hashValue = new String(Base64.encode(email.getBytes()));	
-				
-				Database db = new Database();
-				try 
-				{
-		
-					con = db.getConnection();
-					ps = con.prepareStatement(
-							"insert into tempRegistration (firstName,lastName,homeTown,dateOfBirth,email,password,bio,hashValue,registrationDateTime) values (?,?,?,?,?,?,?,?,?)");
-		
-					ps.setString(1, firstName);
-					ps.setString(2, lastName);
-					ps.setString(3, homeTown);
-					ps.setDate(4, dateOfBirth);
-					ps.setString(5, email);
-					ps.setString(6, password);
-					ps.setString(7, bio);
-					ps.setString(8, hashValue);
-					ps.setString(9, dateFormat.format(registrationDateTime.getTime()));
-					int result = ps.executeUpdate();
-					
-					if(result > 0)
-					{
-						System.out.println("SQL Query Executed records inserted--------------------- "  + result);
-						sendRegistrationLinkStatus = sendEmail(email, hashValue);
-					}
-
-				} 
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				} 
-				finally 
-				{
-					con.close();
-				}
-			}
+	
 
 	/**
 	 * A simple method to generate random numbers 
@@ -849,43 +715,51 @@ public class credentialService
 	
 	
 	/**
-	 * Sends email from info@tabletribes.com to user's email address for registration
+	 * Sends email from info@tabletribes.com to user's email address for
+	 * registration
 	 * 
 	 * @param email
 	 * @param hashValue
 	 * @return
 	 */
-	private boolean sendEmail(String email, String hashValue)
-	{
+	@POST
+	@Path("/sendEmail")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	private boolean sendEmail(@FormParam("title") String title,
+			@FormParam("fullname") String fullname,
+			@FormParam("email_address") String email_address,
+			@FormParam("birthdate") Date birthdate,
+			@FormParam("country") String country,
+			@FormParam("phonenumber") String phonenumber,
+			@FormParam("input-textArea") String text) {
 		final String username = "noreply@tabletribes.com";
 		final String password = "TT1s@wesome";
+		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
 		Properties prop = new Properties();
 		prop.put("mail.smtp.auth", "true");
 		prop.put("mail.smtp.host", "box260.bluehost.com");
 		prop.put("mail.smtp.port", "25");
 		prop.put("mail.smtp.starttls.enable", "true");
 		Session session = Session.getDefaultInstance(prop,
-				new javax.mail.Authenticator()
-				{
-					protected PasswordAuthentication getPasswordAuthentication()
-					{
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
 						return new PasswordAuthentication(username, password);
 					}
 				});
- 
-		try 
-		{
- 
-			String link = "http://vast-scrubland-7419.herokuapp.com/credentialService/registerUser?key=" + hashValue;
-			
+
+		try {
+
 			String body = "Mail Body";
-			String htmlBody = "<strong>Hi. Please click on the following link <a href=" + link +">" + link + "</a> to successfully register with TableTribes.</strong>";
-			String textBody = "Hi. Please click on the following link <a href=" + link +">" + link + "</a> to successfully register with TableTribes.";
+			String htmlBody = "<strong>Name: " + fullname + ", email: "
+					+ email_address + ", country: " + country + ", message: "
+					+ text + "</strong>";
+			String textBody = "Name: " + fullname + ", email: " + email_address
+					+ ", country: " + country + ", message: " + text;
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("info@tabletribes.com"));
 			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(email));
-			message.setSubject("Verify your Email address and register with TABLETRIBES");
+					InternetAddress.parse(destinationEmailAddress));
+			message.setSubject("New Enquiry");
 			MailcapCommandMap mc = (MailcapCommandMap) CommandMap
 					.getDefaultCommandMap();
 			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
@@ -898,13 +772,12 @@ public class credentialService
 			message.setContent(textBody, "text/html");
 			Transport.send(message);
 			System.out.println("Done");
-			
+
 			return true;
- 
-		} 
-		catch (MessagingException e) 
-		{
-			System.out.println("Error while sending registration email due to: " + e);
+
+		} catch (MessagingException e) {
+			System.out.println("Error while sending new enquiry email due to: "
+					+ e);
 		}
 		return false;
 	}
