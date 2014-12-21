@@ -807,7 +807,7 @@ public class credentialService
 		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
 		
 		final String SMTP_HOST_NAME = "smtpout.secureserver.net"; //smtp URL
-		final int SMTP_HOST_PORT = 80; //port number
+		final int SMTP_HOST_PORT = 465; //port number
 		final String SMTP_AUTH_USER = "noreply@rohitkhanduri.com"; //email_id of sender
 		final String SMTP_AUTH_PWD = "Rohit1901!"; //password of sender email_id
 
