@@ -804,37 +804,48 @@ public class credentialService
 			@FormParam("phonenumber") String phonenumber,
 			@FormParam("input-textArea") String text) 
 	{
-		final String sourceEmailAddress = "noreply@rohitkhanduri.com";
+		final String username = "noreply@rohitkhanduri.com";
+		final String password = "Rohit1901!";
 		final String destinationEmailAddress = "rohit.khanduri@hotmail.com";
 		
-		final String SMTP_HOST_NAME = "smtpout.secureserver.net"; //smtp URL
-		final int SMTP_HOST_PORT = 465; //port number
-		final String SMTP_AUTH_USER = sourceEmailAddress; //email_id of sender
-		final String SMTP_AUTH_PWD = "Rohit1901!"; //password of sender email_id
+		Properties prop = new Properties();
+		prop.put("mail.smtp.auth", "true");
+		prop.put("mail.smtp.host", "smtpout.secureserver.net");
+		prop.put("mail.smtp.port", "25");
+		prop.put("mail.smtp.starttls.enable", "true");
+		Session session = Session.getDefaultInstance(prop,
+				new javax.mail.Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(username, password);
+					}
+				});
 
-		try 
-		{
-		    Properties props = new Properties();
-		    props.put("mail.transport.protocol", "smtps");
-		    props.put("mail.smtps.host", SMTP_HOST_NAME);
-		    props.put("mail.smtps.auth", "true");
+		try {
 
-		    Session mailSession = Session.getDefaultInstance(props);
-		    mailSession.setDebug(true);
-		    Transport transport = mailSession.getTransport();
-		    MimeMessage message = new MimeMessage(mailSession);
+			String body = "Mail Body";
+			String htmlBody = "<strong>Name: " + fullname + ", email: "
+					+ email_address + ", country: " + country + ", message: "
+					+ text + "</strong>";
+			String textBody = "Name: " + fullname + ", email: " + email_address
+					+ ", country: " + country + ", message: " + text;
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("info@tabletribes.com"));
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(destinationEmailAddress));
+			message.setSubject("New Enquiry");
+			MailcapCommandMap mc = (MailcapCommandMap) CommandMap
+					.getDefaultCommandMap();
+			mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+			mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+			mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+			mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+			mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+			CommandMap.setDefaultCommandMap(mc);
+			message.setText(htmlBody);
+			message.setContent(textBody, "text/html");
+			Transport.send(message);
+			System.out.println("---------------------Email sent successfully---------------------");
 
-		    message.setSubject("New Enquiry");
-		    message.setContent("Message that you want to send", "text/html");
-		    Address[] from = InternetAddress.parse("noreply@rohitkhanduri.com");//Your domain email
-		    message.addFrom(from);
-		    message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinationEmailAddress)); //Send email To (Type email ID that you want to send)
-
-		    transport.connect(SMTP_HOST_NAME, SMTP_HOST_PORT, SMTP_AUTH_USER, SMTP_AUTH_PWD);
-		    transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
-		    transport.close();
-		    
-		    System.out.println("---------------------Email sent successfully---------------------");
 		} 
 		catch (Exception e)
 		{
