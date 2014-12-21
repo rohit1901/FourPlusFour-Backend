@@ -794,9 +794,9 @@ public class credentialService
 	 */
 	@POST
 	@Path("/sendEmailFromGodaddy")
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean sendEmailFromGodaddy(@FormParam("title") String title,
+	public String sendEmailFromGodaddy(@FormParam("title") String title,
 			@FormParam("fullname") String fullname,
 			@FormParam("email_address") String email_address,
 			@FormParam("birthdate") Date birthdate,
@@ -834,14 +834,14 @@ public class credentialService
 		    transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
 		    transport.close();
 		    
-		    return true;
+		    return TRUE;
 		} 
 		catch (Exception e)
 		{
 			System.out.println("Error while sending new enquiry email due to: "
 					+ e);
 		}
-		return false;
+		return FALSE;
 	}
 
 }
