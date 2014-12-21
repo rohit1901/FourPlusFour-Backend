@@ -809,7 +809,7 @@ public class credentialService
 		
 		final String SMTP_HOST_NAME = "smtpout.secureserver.net"; //smtp URL
 		final int SMTP_HOST_PORT = 465; //port number
-		final String SMTP_AUTH_USER = "rohitkhanduri"; //email_id of sender
+		final String SMTP_AUTH_USER = sourceEmailAddress; //email_id of sender
 		final String SMTP_AUTH_PWD = "Rohit1901!"; //password of sender email_id
 
 		try 
@@ -826,7 +826,7 @@ public class credentialService
 
 		    message.setSubject("New Enquiry");
 		    message.setContent("Message that you want to send", "text/html");
-		    Address[] from = InternetAddress.parse(sourceEmailAddress);//Your domain email
+		    Address[] from = InternetAddress.parse("noreply@rohitkhanduri.com");//Your domain email
 		    message.addFrom(from);
 		    message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinationEmailAddress)); //Send email To (Type email ID that you want to send)
 
