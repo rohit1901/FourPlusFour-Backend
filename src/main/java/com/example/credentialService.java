@@ -794,7 +794,8 @@ public class credentialService
 	 */
 	@POST
 	@Path("/sendEmailFromGodaddy")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public boolean sendEmailFromGodaddy(@FormParam("title") String title,
 			@FormParam("fullname") String fullname,
 			@FormParam("email_address") String email_address,
