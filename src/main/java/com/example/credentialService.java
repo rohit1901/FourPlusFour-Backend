@@ -836,7 +836,7 @@ public class credentialService
 		transport.connect("smtpout.secureserver.net", "noreply@rohitkhanduri.com", "Rohit1901!");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
-		System.out.println("---------------------Email not sent---------------------");
+		System.out.println("---------------------Email sent---------------------");
 		
 		} 
 		catch (Exception e)
