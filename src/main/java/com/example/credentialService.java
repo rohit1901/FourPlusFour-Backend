@@ -833,7 +833,7 @@ public class credentialService
 		Transport transport = getMailSession.getTransport("smtp");
 		
 		// Enter your correct gmail UserID and Password (XXXarpitshah@gmail.com)
-		transport.connect("mail.rohitkhanduri.com", "rohitkhanduri", "Rohit1901!");
+		transport.connect("mail.rohitkhanduri.com", "_mainaccount@rohitkhanduri.com", "Rohit1901!");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
 		System.out.println("---------------------Email sent---------------------");
