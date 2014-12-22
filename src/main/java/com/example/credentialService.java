@@ -3,9 +3,7 @@ package com.example;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,12 +13,13 @@ import java.util.Random;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.ws.rs.Consumes;
@@ -33,8 +32,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import model.AccessManager;
-
-import org.glassfish.jersey.internal.util.Base64;
 
 import com.google.gson.Gson;
 
@@ -74,6 +71,10 @@ public class credentialService
 	public static int FIVE = 5;
 	
 	private boolean updateFlag = false;
+	
+	private static Properties mailServerProperties;
+	private static Session getMailSession;
+	private static MimeMessage generateMailMessage;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -785,18 +786,21 @@ public class credentialService
 	}
 	
 	/**
-	 * Sends email from noreply@rohitkhanduri.com to user's email address for
-	 * registration
+	 * Service to send Email to user from Gmail SMTP
 	 * 
-	 * @param email
-	 * @param hashValue
-	 * @return
+	 * @param title
+	 * @param fullname
+	 * @param email_address
+	 * @param birthdate
+	 * @param country
+	 * @param phonenumber
+	 * @param text
 	 */
 	@POST
-	@Path("/sendEmailFromGodaddy")
+	@Path("/sendEmailFromGmail")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void sendEmailFromGodaddy(@FormParam("title") String title,
+	public void sendEmailFromGmail(@FormParam("title") String title,
 			@FormParam("fullname") String fullname,
 			@FormParam("email_address") String email_address,
 			@FormParam("birthdate") Date birthdate,
@@ -804,47 +808,60 @@ public class credentialService
 			@FormParam("phonenumber") String phonenumber,
 			@FormParam("input-textArea") String text) 
 	{
-		Properties mailServerProperties;
-		Session getMailSession;
-		MimeMessage generateMailMessage;
-		
-		try
-		{
-		System.out.println("\n 1st ===> setup Mail Server Properties..");
-		mailServerProperties = System.getProperties();
-		mailServerProperties.put("mail.smtp.port", "25");
-		mailServerProperties.put("mail.smtp.auth", "true");
-		mailServerProperties.put("mail.smtp.starttls.enable", "true");
-		System.out.println("Mail Server Properties have been setup successfully..");
- 
-//Step2		
-		System.out.println("\n\n 2nd ===> get Mail Session..");
-		getMailSession = Session.getDefaultInstance(mailServerProperties, null);
-		generateMailMessage = new MimeMessage(getMailSession);
-		generateMailMessage.setFrom(new InternetAddress("noreply@rohitkhanduri.com"));
-		generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress("rohit.khanduri@hotmail.com"));
-		generateMailMessage.setSubject("Greetings from Crunchify..");
-		String emailBody = "Test email by Crunchify.com JavaMail API example. " + "<br><br> Regards, <br>Crunchify Admin";
-		generateMailMessage.setContent(emailBody, "text/html");
-		System.out.println("Mail Session has been created successfully..");
- 
-//Step3		
-		System.out.println("\n\n 3rd ===> Get Session and Send mail");
-		Transport transport = getMailSession.getTransport("smtp");
-		
-		// Enter your correct gmail UserID and Password (XXXarpitshah@gmail.com)
-		transport.connect("mail.rohitkhanduri.com", "noreply@rohitkhanduri.com", "Rohit1901!");
-		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
-		transport.close();
-		System.out.println("---------------------Email sent---------------------");
-		
-		} 
-		catch (Exception e)
-		{
-			System.out.println("Error while sending new enquiry email due to: "
-					+ e);
-		}
-		System.out.println("---------------------Email not sent---------------------");
-	}
+				// Step1
+				Transport transport;
+				try {
+					System.out.println("\n 1st ===> setup Mail Server Properties..");
+					mailServerProperties = System.getProperties();
+					mailServerProperties.put("mail.smtp.port", "587");
+					mailServerProperties.put("mail.smtp.auth", "true");
+					mailServerProperties.put("mail.smtp.starttls.enable", "true");
+					System.out.println("Mail Server Properties have been setup successfully..");
 
+					// Step2
+					System.out.println("\n\n 2nd ===> get Mail Session..");
+					getMailSession = Session.getDefaultInstance(mailServerProperties, null);
+					generateMailMessage = new MimeMessage(getMailSession);
+					generateMailMessage.addRecipient(Message.RecipientType.TO,
+							new InternetAddress("pratibhas533@gmail.com"));
+					generateMailMessage.addRecipient(Message.RecipientType.CC,
+							new InternetAddress("rohit.khanduri@hotmail.com"));
+					generateMailMessage.setSubject("You've got an Enquiry!");
+					String emailBody = "Please refer the following enquiry and respond at the earliest."
+							+ "<br><br>Name: "
+							+ fullname
+							+ "<br><br>Email: "
+							+ email_address
+							+ "<br><br>Country: "
+							+ country
+							+ "<br><br>Details: '"
+							+ text
+							+ "'<br><br> Regards, <br>PS Handicrafts Admin";
+					generateMailMessage.setContent(emailBody, "text/html");
+					System.out.println("Mail Session has been created successfully..");
+
+					// Step3
+					System.out.println("\n\n 3rd ===> Get Session and Send mail");
+					transport = getMailSession.getTransport("smtp");
+
+					transport.connect("smtp.gmail.com", "rohitthump@gmail.com",
+							"Rohit1901!");
+					transport.sendMessage(generateMailMessage,
+							generateMailMessage.getAllRecipients());
+					transport.close();
+				} 
+				catch (AddressException e) 
+				{
+					System.out.println("Address Exception occurred while sending Email. " + e);
+				} 
+				catch (NoSuchProviderException e) 
+				{
+					System.out.println("NoSuchProvider Exception occurred while sending Email. " + e);
+				} 
+				catch (MessagingException e) 
+				{
+					System.out.println("Messaging Exception occurred while sending Email. " + e);
+				}
+	
+	}
 }
